@@ -10,8 +10,25 @@ function updateAttributes(target, originNewProps, originOldProps) {
     const oldProp = oldProps[key];
     if (newProp !== oldProp) {
       if (key.startsWith("on")) {
-        removeEvent(target, key.slice(2).toLowerCase(), oldProp);
-        addEvent(target, key.slice(2).toLowerCase(), newProp);
+        const eventType = key.slice(2).toLowerCase();
+
+        if (oldProp) {
+          removeEvent(target, eventType, oldProp);
+        }
+
+        if (newProp) {
+          addEvent(target, eventType, newProp);
+        }
+      }
+    }
+  });
+
+  Object.keys(oldProps).forEach((key) => {
+    const oldProp = oldProps[key];
+    if (!newProps[key]) {
+      if (key.startsWith("on")) {
+        const eventType = key.slice(2).toLowerCase();
+        removeEvent(target, eventType, oldProp);
       }
     }
   });
@@ -24,22 +41,37 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     return;
   }
 
+  // 2. 기존 노드가 없다면 새로운 노드 추가.
   if (!oldNode) {
+    console.log("새로운 노드 추가");
     parentElement.appendChild(createElement(newNode));
     return;
   }
 
+  // 3. 타입이 다르다면 교체.
   if (newNode.type !== oldNode.type) {
     parentElement.replaceChild(
       createElement(newNode),
-      parentElement.children[index],
+      parentElement.childNodes[index],
     );
     return;
   }
 
+  // 4. 텍스트 노드인 경우 텍스트 업데이트.
+  if (typeof newNode === "string" || typeof oldNode === "string") {
+    if (newNode !== oldNode) {
+      parentElement.replaceChild(
+        document.createTextNode(newNode),
+        parentElement.childNodes[index],
+      );
+    }
+    return;
+  }
+
+  // 5. 타입이 같다면 속성 업데이트.
   if (newNode.type === oldNode.type) {
     updateAttributes(
-      parentElement.children[index],
+      parentElement.childNodes[index],
       newNode.props,
       oldNode.props,
     );

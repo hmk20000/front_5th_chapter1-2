@@ -15,6 +15,7 @@ export function renderElement(vNode, container) {
   } else {
     updateElement(container, vNode, oldNode);
   }
+
   setupEventListeners(container);
 
   oldNode = vNode;
