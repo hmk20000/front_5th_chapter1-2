@@ -19,6 +19,10 @@ function updateAttributes(target, originNewProps, originOldProps) {
         if (newProp) {
           addEvent(target, eventType, newProp);
         }
+      } else if (key === "className") {
+        target.className = newProp;
+      } else {
+        target.setAttribute(key, newProp);
       }
     }
   });
@@ -43,7 +47,6 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
 
   // 2. 기존 노드가 없다면 새로운 노드 추가.
   if (!oldNode) {
-    console.log("새로운 노드 추가");
     parentElement.appendChild(createElement(newNode));
     return;
   }
