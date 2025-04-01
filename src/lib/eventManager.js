@@ -1,22 +1,30 @@
 const eventMap = new Map();
 let rootElement = null;
+const activeHandlers = new Map();
 
 export function setupEventListeners(root) {
   // 이벤트 맵에 등록된 이벤트를 root에 등록
   rootElement = root;
 
-  // 모든 이벤트 리스너 제거
-  eventMap.forEach((handlers, eventType) => {
-    handlers.forEach((handler) => {
-      rootElement.removeEventListener(eventType, handler);
-    });
+  // 이전에 등록된 이벤트 핸들러 제거
+  activeHandlers.forEach((handler, eventType) => {
+    rootElement.removeEventListener(eventType, handler);
   });
+  activeHandlers.clear();
 
   // 이벤트 맵에 등록된 이벤트를 root에 다시 등록
   eventMap.forEach((handlers, eventType) => {
-    handlers.forEach((handler) => {
-      rootElement.addEventListener(eventType, handler);
-    });
+    const eventHandler = (e) => {
+      // 이벤트 타겟이 등록된 엘리먼트인지 확인
+      for (const [element, handler] of handlers.entries()) {
+        if (element === e.target || element.contains(e.target)) {
+          handler(e);
+          break;
+        }
+      }
+    };
+    rootElement.addEventListener(eventType, eventHandler);
+    activeHandlers.set(eventType, eventHandler);
   });
 }
 
