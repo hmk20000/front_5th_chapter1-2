@@ -46,7 +46,7 @@ export const Post = ({
           className={`like-button cursor-pointer${activationLike ? " text-blue-500" : ""}`}
           onClick={handleLike}
         >
-          좋아요 {likeUsers.includes(currentUser) ? "1" : "0"}
+          좋아요 {likeUsers.length}
         </span>
         <span>댓글</span>
         <span>공유</span>
