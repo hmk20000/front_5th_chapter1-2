@@ -14,15 +14,10 @@ export function setupEventListeners(root) {
 
   // 이벤트 맵에 등록된 이벤트를 root에 다시 등록
   eventMap.forEach((handlers, eventType) => {
-    const eventHandler = (e) => {
-      // 이벤트 타겟이 등록된 엘리먼트인지 확인
-      for (const [element, handler] of handlers.entries()) {
-        if (element === e.target || element.contains(e.target)) {
-          handler(e);
-          break;
-        }
-      }
-    };
+    // 이벤트 타겟이 등록된 엘리먼트인지 확인
+    const eventHandler = (e) =>
+      handlers.has(e.target) && handlers.get(e.target)(e);
+
     rootElement.addEventListener(eventType, eventHandler);
     activeHandlers.set(eventType, eventHandler);
   });
