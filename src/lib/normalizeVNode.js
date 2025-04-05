@@ -31,8 +31,6 @@ export function normalizeVNode(vNode) {
   return {
     type: vNode.type,
     props: vNode.props,
-    children: Array.isArray(vNode.children)
-      ? vNode.children.map(normalizeVNode).filter((node) => node !== "")
-      : vNode.children,
+    children: vNode.children.map(normalizeVNode).filter(Boolean),
   };
 }
